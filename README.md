@@ -18,7 +18,8 @@ docker compose up --build
 - Backend API docs: http://localhost:8000/docs
 - Everything via Nginx: http://localhost
 
-
+## Project Structure
+'''
 ai-developer-workspace/
 ├── docker-compose.yml
 ├── .env.example
@@ -60,3 +61,5 @@ ai-developer-workspace/
 │       └── pages/Dashboard.tsx
 └── nginx/
     └── nginx.conf
+
+'''
