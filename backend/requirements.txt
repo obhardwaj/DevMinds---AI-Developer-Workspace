@@ -1,0 +1,34 @@
+# backend/requirements.txt
+# Pinned-ish dependency list, grouped by which layer of the architecture uses them.
+
+# --- Web framework ---
+fastapi
+uvicorn[standard]
+
+# --- Repository Intelligence Engine (non-AI) ---
+# tree-sitter-languages is unmaintained and has no wheels for Python 3.12+.
+# Official per-language packages work with tree-sitter >= 0.22 and Python 3.13.
+tree-sitter
+tree-sitter-python
+tree-sitter-javascript
+tree-sitter-typescript
+tree-sitter-java
+networkx
+
+# --- Database & background jobs ---
+sqlalchemy
+psycopg2-binary
+alembic
+redis
+celery
+
+# --- Optional AI layer ---
+langchain
+langchain-openai
+sentence-transformers
+chromadb
+
+# --- Utilities ---
+pydantic-settings
+python-multipart      # for ZIP/file uploads
+gitpython              # for cloning GitHub repos
