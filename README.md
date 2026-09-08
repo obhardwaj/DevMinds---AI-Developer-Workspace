@@ -19,7 +19,7 @@ docker compose up --build
 - Everything via Nginx: http://localhost
 
 ## Project Structure
-'''
+```
 ai-developer-workspace/
 ├── docker-compose.yml
 ├── .env.example
@@ -62,4 +62,4 @@ ai-developer-workspace/
 └── nginx/
     └── nginx.conf
 
-'''
+```
