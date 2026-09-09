@@ -6,9 +6,7 @@ fastapi
 uvicorn[standard]
 
 # --- Repository Intelligence Engine (non-AI) ---
-# tree-sitter-languages is unmaintained and has no wheels for Python 3.12+.
-# Official per-language packages work with tree-sitter >= 0.22 and Python 3.13.
-tree-sitter
+tree-sitter>=0.22.0
 tree-sitter-python
 tree-sitter-javascript
 tree-sitter-typescript

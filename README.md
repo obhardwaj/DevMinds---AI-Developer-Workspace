@@ -10,13 +10,33 @@ Impact Analyzer) compute results from that graph; an optional AI layer
 explains the results in natural language.
 
 ## Run locally
-\`\`\`bash
+
+```bash
 cp .env.example .env
 docker compose up --build
-\`\`\`
+```
+
 - Frontend: http://localhost:5173
 - Backend API docs: http://localhost:8000/docs
 - Everything via Nginx: http://localhost
+
+## Project layout
+
+- `backend/app/engine/` — Repository Intelligence Engine (parsing + graph model, non-AI)
+- `backend/app/modules/` — the 5 deterministic modules (Health Index, Similarity,
+  Pattern Detector, Dead Code Detection, Impact Analyzer)
+- `backend/app/ai_layer/` — optional RAG/LLM explanation layer
+- `backend/app/api/` — FastAPI routes tying it all together
+- `backend/app/workers/` — Celery background tasks for slow repo analysis
+- `frontend/` — React/TypeScript dashboard
+- `nginx/` — reverse proxy config
+
+## Team split suggestion
+
+1. Engine + DB (`engine/`, `db/`)
+2. The 5 deterministic modules (`modules/`)
+3. Optional AI layer + frontend (`ai_layer/`, `frontend/`)
+
 
 ## Project Structure
 ```

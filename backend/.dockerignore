@@ -1,0 +1,43 @@
+# .dockerignore
+# Place one copy in backend/ and one in frontend/ (or a shared root one,
+# adjusted per build context) — keeps images small and builds fast by
+# excluding files the container never needs.
+
+# --- Version control ---
+.git
+.gitignore
+
+# --- Environment / secrets (never bake these into an image) ---
+.env
+*.env.local
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# --- Node / frontend ---
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+
+# --- Local data / runtime artifacts ---
+pg_data/
+chroma_data/
+tmp/repos/
+*.sqlite3
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Docs / misc (not needed inside the container) ---
+README.md
+*.md

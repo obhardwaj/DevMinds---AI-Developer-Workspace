@@ -1,0 +1,85 @@
+# docker-compose.yml
+# Orchestrates every service: the FastAPI backend (which hosts the
+# Repository Intelligence Engine + 5 modules + optional AI layer),
+# the React frontend, Postgres, Redis, a vector DB, and Nginx as
+# the reverse proxy. `docker compose up --build` starts everything.
+
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: adw-backend
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+      - chromadb
+    volumes:
+      - ./backend:/app          # live-reload during development
+      - repo_workspace:/tmp/repos   # isolated workspace for uploaded repos
+    ports:
+      - "8000:8000"
+
+  worker:
+    build: ./backend
+    container_name: adw-worker
+    command: ["celery", "-A", "app.workers.tasks", "worker", "--loglevel=info"]
+    env_file: .env
+    depends_on:
+      - backend
+      - redis
+    volumes:
+      - ./backend:/app
+      - repo_workspace:/tmp/repos
+
+  frontend:
+    build: ./frontend
+    container_name: adw-frontend
+    env_file: .env
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: adw-postgres
+    environment:
+      POSTGRES_USER: adw
+      POSTGRES_PASSWORD: adw_password
+      POSTGRES_DB: adw_db
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: adw-redis
+    ports:
+      - "6379:6379"
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: adw-chromadb
+    volumes:
+      - chroma_data:/chroma/chroma
+    ports:
+      - "8001:8000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: adw-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+
+volumes:
+  pg_data:
+  chroma_data:
+  repo_workspace:

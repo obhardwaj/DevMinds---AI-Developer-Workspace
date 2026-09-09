@@ -1,12 +1,43 @@
+# .gitignore
+
+# --- Environment / secrets ---
 .env
-node_modules
-dist
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.env.local
+
+# --- Python (backend) ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+celerybeat-schedule
+
+# --- Node / frontend ---
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Databases / local data ---
+*.sqlite3
+pg_data/
+chroma_data/
+
+# --- Uploaded / cloned repositories (runtime workspace) ---
+backend/tmp_repos/
+tmp/repos/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
 docker-compose.override.yml
-DockerFile
-docker-compose.yml
-/venv
