@@ -33,7 +33,7 @@ def _get_text(source_bytes: bytes, node) -> str:
 
 
 # ============================================================
-# Python: import + call extraction (unchanged from before)
+# Python: import + call extraction
 # ============================================================
 
 def _extract_import_bindings(root, source_bytes: bytes) -> tuple[dict[str, str], dict[str, tuple[str, str]]]:
