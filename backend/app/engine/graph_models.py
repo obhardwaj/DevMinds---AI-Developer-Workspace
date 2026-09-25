@@ -15,6 +15,7 @@ class CodeNode:
     name: str
     start_line: int
     end_line: int
+    has_docstring: bool = False   # set by parser.py during extraction
 
 
 @dataclass
@@ -33,3 +34,4 @@ class RepoGraph:
     queries — none of them re-parse the codebase themselves."""
     nodes: dict[str, CodeNode] = field(default_factory=dict)
     edges: list[CodeEdge] = field(default_factory=list)
+    raw_import_modules: set[str] = field(default_factory=set)  # every module name seen in any import, used to detect frameworks
