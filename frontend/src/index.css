@@ -1,0 +1,5 @@
+/* frontend/src/index.css */
+/* Pulls in Tailwind's base styles, components, and utility classes. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

@@ -6,9 +6,16 @@
 from fastapi import APIRouter, UploadFile
 from app.modules import health_index, pattern_detector, dead_code, impact_analyzer, similarity
 from app.ai_layer.rag_chat import answer_question
+from pydantic import BaseModel
+from app.engine.parser import parse_repository
+from app.engine.graph_builder import build_dependency_edges
+from app.modules.health_index import compute_health_index
+from app.modules.dead_code import find_dead_code
 
 router = APIRouter()
 
+class AnalyzeRequest(BaseModel):
+    repo_path: str
 
 @router.post("/repositories/upload")
 async def upload_repository(file: UploadFile | None = None, github_url: str | None = None):
@@ -19,6 +26,49 @@ async def upload_repository(file: UploadFile | None = None, github_url: str | No
     TODO: save/clone into /tmp/repos, call parse_repository() + build_dependency_edges().
     """
     return {"repository_id": "placeholder"}
+
+@router.post("/repositories/analyze")
+def analyze_repository_path(payload: AnalyzeRequest):
+    """
+    Demo/dev endpoint: runs the full engine pipeline synchronously against
+    a LOCAL filesystem path — not the real GitHub/ZIP upload flow yet (see
+    the TODO in upload_repository above). Good enough for live demos and
+    for wiring up the dashboard now; once real uploads exist, this should
+    move into workers/tasks.py so a large repo doesn't block the request.
+    """
+    graph = build_dependency_edges(parse_repository(payload.repo_path))
+    health = compute_health_index(graph)
+    dead_code = find_dead_code(graph)
+
+    return {
+        "node_count": len(graph.nodes),
+        "edge_count": len(graph.edges),
+        "health_index": health,
+        "dead_code": dead_code,
+    }
+
+@router.post("/repositories/graph")
+def get_repository_graph(payload: AnalyzeRequest):
+    """
+    Returns just the FILE-level nodes and import/includes/calls edges
+    between them, for visualization — not every function/class node,
+    which would be far too dense to render clearly for a repo of any
+    real size. Reuses the same engine pipeline as /analyze.
+    """
+    graph = build_dependency_edges(parse_repository(payload.repo_path))
+
+    file_nodes = [
+        {"id": n.id, "name": n.name}
+        for n in graph.nodes.values() if n.kind == "file"
+    ]
+    file_ids = {n["id"] for n in file_nodes}
+    file_edges = [
+        {"source": e.source_id, "target": e.target_id, "relation": e.relation}
+        for e in graph.edges
+        if e.source_id in file_ids and e.target_id in file_ids
+    ]
+
+    return {"nodes": file_nodes, "edges": file_edges}
 
 
 @router.get("/repositories/{repo_id}/health-index")
